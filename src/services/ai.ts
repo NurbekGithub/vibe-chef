@@ -84,16 +84,17 @@ export class ZaiAIService {
   
   // Private helper methods
   private async callAI(prompt: string): Promise<string> {
-    const endpoint = this.config.apiEndpoint || 'https://api.zai.com/v1';
+    const endpoint = this.config.apiEndpoint || 'https://api.z.ai/api/paas/v4';
     
     const response = await fetch(`${endpoint}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.config.apiKey}`,
+        'Accept-Language': 'en-US,en',
       },
       body: JSON.stringify({
-        model: 'zai-1',
+        model: 'glm-4.7',
         messages: [
           {
             role: 'system',
@@ -109,7 +110,8 @@ export class ZaiAIService {
     });
     
     if (!response.ok) {
-      throw new Error(`AI API error: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`AI API error: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json() as {

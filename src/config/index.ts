@@ -20,7 +20,7 @@ export function loadConfig(): Config {
   return {
     telegramBotToken,
     zaiApiKey,
-    zaiApiEndpoint: process.env.ZAI_API_ENDPOINT || 'https://api.zai.com/v1',
+    zaiApiEndpoint: process.env.ZAI_API_ENDPOINT || 'https://api.z.ai/api/paas/v4',
     nodeEnv: (process.env.NODE_ENV as 'development' | 'production') || 'development',
   };
 }
