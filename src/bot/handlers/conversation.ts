@@ -27,7 +27,7 @@ export function setupConversation(bot: Bot, storage: StorageService, aiService: 
         break;
         
       default:
-        await ctx.reply('Please complete the current operation or use /cancel to start over.');
+        await ctx.reply('Пожалуйста, завершите текущую операцию или используйте /cancel, чтобы начать заново.');
     }
   });
 }
@@ -46,11 +46,11 @@ async function handleNewIngredients(
     .filter(line => line.length > 0);
   
   if (ingredientLines.length === 0) {
-    await ctx.reply('Please provide at least one ingredient.');
+    await ctx.reply('Пожалуйста, укажите хотя бы один ингредиент.');
     return;
   }
   
-  await ctx.reply('🔄 Analyzing ingredients...');
+  await ctx.reply('🔄 Анализ ингредиентов...');
   
   // Classify ingredients with AI
   const classification = await aiService.classifyIngredients({ ingredients: ingredientLines });
@@ -65,7 +65,7 @@ async function handleNewIngredients(
   };
   
   // Display classified ingredients
-  let message = '🥘 *Ingredients classified:*\n\n';
+  let message = '🥘 *Ингредиенты классифицированы:*\n\n';
   classification.ingredients.forEach((ing: any, index: number) => {
     message += `${index + 1}. ${ing.name}`;
     if (ing.classification) {
@@ -74,7 +74,7 @@ async function handleNewIngredients(
     message += '\n';
   });
   
-  message += '\nPlease select a category for this recipe:';
+  message += '\nПожалуйста, выберите категорию для этого рецепта:';
   
   // Show category keyboard
   const keyboard = createCategoryKeyboard();
@@ -94,12 +94,20 @@ async function handleTitleInput(
   const title = text.trim();
   
   if (title.length === 0) {
-    await ctx.reply('Please provide a title or use /cancel to cancel.');
+    await ctx.reply('Пожалуйста, укажите название или используйте /cancel для отмены.');
     return;
   }
   
-  session.currentRecipe.title = title;
+  // Check if user wants to use the suggested title
+  if (title.toLowerCase() === 'use suggestion' || title.toLowerCase() === 'использовать предложение') {
+    const ingredientNames = session.classifiedIngredients.map((i: any) => i.name);
+    const suggestedTitle = await aiService.suggestTitle(ingredientNames);
+    session.currentRecipe.title = suggestedTitle;
+  } else {
+    session.currentRecipe.title = title;
+  }
+  
   session.state = 'adding_photo';
   
-  await ctx.reply(`📸 Great! Title set to: "${title}"\n\nYou can now attach a photo (optional) or send /skip to finish.`);
+  await ctx.reply(`📸 Отлично! Название установлено: "${session.currentRecipe.title}"\n\nТеперь вы можете прикрепить фото (необязательно) или отправить /skip для завершения.`);
 }

@@ -6,17 +6,17 @@ export function setupCommands(bot: Bot, storage: StorageService, aiService: ZaiA
   // /start command
   bot.command('start', async (ctx) => {
     const welcomeMessage = `
-👋 Welcome to *Telegram Chef*!
+👋 Добро пожаловать в *Telegram Chef*!
 
-I'm your personal recipe organizer. Here's what I can do:
+Я ваш личный организатор рецептов. Вот что я умею:
 
-• Send me ingredients and I'll help organize them
-• Attach photos to your recipes
-• I'll classify and categorize your recipes automatically
-• View all your recipes anytime
+• Отправьте мне ингредиенты, и я помогу их организовать
+• Прикрепляйте фото к вашим рецептам
+• Я автоматически классифицирую и категоризирую ваши рецепты
+• Просматривайте все ваши рецепты в любое время
 
-*Getting Started:*
-Just start typing your ingredients or use /help for more information!
+*Как начать:*
+Просто начните вводить ингредиенты или используйте /help для получения дополнительной информации!
     `.trim();
     
     await ctx.reply(welcomeMessage, { parse_mode: 'Markdown' });
@@ -25,27 +25,27 @@ Just start typing your ingredients or use /help for more information!
   // /help command
   bot.command('help', async (ctx) => {
     const helpMessage = `
-📚 *Help & Commands*
+📚 *Помощь и команды*
 
-*Commands:*
-/start - Start the bot and see welcome message
-/help - Show this help message
-/myrecipes - View all your recipes
-/recipe <id> - View a specific recipe
-/cancel - Cancel current operation
+*Команды:*
+/start - Запустить бота и увидеть приветственное сообщение
+/help - Показать это справочное сообщение
+/myrecipes - Просмотреть все ваши рецепты
+/recipe <id> - Просмотреть конкретный рецепт
+/cancel - Отменить текущую операцию
 
-*How to add a recipe:*
-1. Send me your ingredients as text
-2. I'll classify them and suggest a category
-3. Select a category from the inline buttons
-4. Provide a title (or accept my suggestion)
-5. Attach a photo (optional)
-6. Your recipe is saved!
+*Как добавить рецепт:*
+1. Отправьте мне ингредиенты в виде текста
+2. Я классифицирую их и предложу категорию
+3. Выберите категорию из встроенных кнопок
+4. Укажите название (или примите мое предложение)
+5. Прикрепите фото (необязательно)
+6. Ваш рецепт сохранен!
 
-*Tips:*
-• You can send ingredients in any format
-• Photos are optional but recommended
-• Use /cancel to start over anytime
+*Советы:*
+• Вы можете отправлять ингредиенты в любом формате
+• Фото необязательно, но рекомендуется
+• Используйте /cancel, чтобы начать заново в любое время
     `.trim();
     
     await ctx.reply(helpMessage, { parse_mode: 'Markdown' });
@@ -59,11 +59,11 @@ Just start typing your ingredients or use /help for more information!
     const recipes = await storage.getUserRecipes(userId);
     
     if (recipes.length === 0) {
-      await ctx.reply('📭 You don\'t have any recipes yet.\n\nStart by sending me some ingredients!');
+      await ctx.reply('📭 У вас пока нет рецептов.\n\nНачните с отправки мне ингредиентов!');
       return;
     }
     
-    let message = `📖 *Your Recipes (${recipes.length})*\n\n`;
+    let message = `📖 *Ваши рецепты (${recipes.length})*\n\n`;
     
     recipes.forEach((recipe, index) => {
       message += `${index + 1}. ${recipe.title}\n`;
@@ -71,7 +71,7 @@ Just start typing your ingredients or use /help for more information!
       message += `   🆔 ${recipe.id}\n\n`;
     });
     
-    message += 'Use /recipe <id> to view a specific recipe';
+    message += 'Используйте /recipe <id> для просмотра конкретного рецепта';
     
     await ctx.reply(message, { parse_mode: 'Markdown' });
   });
@@ -84,19 +84,19 @@ Just start typing your ingredients or use /help for more information!
     const recipeId = ctx.match;
     
     if (!recipeId) {
-      await ctx.reply('Please provide a recipe ID: /recipe <id>');
+      await ctx.reply('Пожалуйста, укажите ID рецепта: /recipe <id>');
       return;
     }
     
     const recipe = await storage.getRecipe(recipeId);
     
     if (!recipe) {
-      await ctx.reply('❌ Recipe not found. Use /myrecipes to see your recipes.');
+      await ctx.reply('❌ Рецепт не найден. Используйте /myrecipes для просмотра ваших рецептов.');
       return;
     }
     
     if (recipe.userId !== userId) {
-      await ctx.reply('❌ You can only view your own recipes.');
+      await ctx.reply('❌ Вы можете просматривать только свои рецепты.');
       return;
     }
     
@@ -113,11 +113,11 @@ Just start typing your ingredients or use /help for more information!
     const session = storage.getSession(userId);
     
     if (!session || session.state === 'idle') {
-      await ctx.reply('ℹ️ No active operation to cancel.');
+      await ctx.reply('ℹ️ Нет активной операции для отмены.');
       return;
     }
     
     storage.clearSession(userId);
-    await ctx.reply('✅ Operation cancelled. Send me some ingredients to start a new recipe!');
+    await ctx.reply('✅ Операция отменена. Отправьте мне ингредиенты, чтобы начать новый рецепт!');
   });
 }

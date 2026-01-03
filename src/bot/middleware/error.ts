@@ -10,7 +10,7 @@ export function errorHandler(): Middleware {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       
       try {
-        await ctx.reply(`❌ Something went wrong: ${errorMessage}\n\nPlease try again or use /help`);
+        await ctx.reply(`❌ Что-то пошло не так: ${errorMessage}\n\nПожалуйста, попробуйте снова или используйте /help`);
       } catch (replyError) {
         console.error('Failed to send error message:', replyError);
       }

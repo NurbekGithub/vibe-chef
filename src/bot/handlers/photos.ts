@@ -12,14 +12,14 @@ export function setupPhotos(bot: Bot, storage: StorageService, aiService: ZaiAIS
     
     // Only accept photos when adding a recipe
     if (session.state !== 'adding_photo') {
-      await ctx.reply('ℹ️ Please start by sending ingredients first.');
+      await ctx.reply('ℹ️ Пожалуйста, начните с отправки ингредиентов.');
       return;
     }
     
     const photo = ctx.message.photo?.[ctx.message.photo.length - 1]; // Get largest photo
     
     if (!photo) {
-      await ctx.reply('❌ Failed to process photo. Please try again.');
+      await ctx.reply('❌ Не удалось обработать фото. Пожалуйста, попробуйте снова.');
       return;
     }
     
@@ -75,7 +75,7 @@ async function finalizeRecipe(
   // Format and display recipe
   const formatted = await aiService.formatRecipe({ recipe });
   
-  await ctx.reply('✅ Recipe saved successfully!\n\n');
+  await ctx.reply('✅ Рецепт успешно сохранен!\n\n');
   
   // Send photo if exists
   if (recipe.photo) {
@@ -87,5 +87,5 @@ async function finalizeRecipe(
     await ctx.reply(formatted.formattedText, { parse_mode: 'Markdown' });
   }
   
-  await ctx.reply('\nSend me more ingredients to add another recipe!');
+  await ctx.reply('\nОтправьте мне больше ингредиентов, чтобы добавить еще один рецепт!');
 }

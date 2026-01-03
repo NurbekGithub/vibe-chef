@@ -61,15 +61,15 @@ async function handleCategorySelection(
   
   await ctx.answerCallbackQuery();
   
-  let message = `📂 Category: ${category}\n\n`;
+  let message = `📂 Категория: ${category}\n\n`;
   
-  if (suggestedTitle && suggestedTitle !== 'Untitled Recipe') {
-    message += `💡 Suggested title: "${suggestedTitle}"\n\n`;
-    message += `You can:\n`;
-    message += `• Type your own title\n`;
-    message += `• Send "use suggestion" to use the suggested title\n`;
+  if (suggestedTitle && suggestedTitle !== 'Рецепт без названия') {
+    message += `💡 Предложенное название: "${suggestedTitle}"\n\n`;
+    message += `Вы можете:\n`;
+    message += `• Ввести свое название\n`;
+    message += `• Отправить "использовать предложение" чтобы использовать предложенное название\n`;
   } else {
-    message += `Please provide a title for your recipe:`;
+    message += `Пожалуйста, укажите название для вашего рецепта:`;
   }
   
   await ctx.editMessageText(message);
@@ -89,12 +89,12 @@ async function handleViewRecipe(
   const recipe = await storage.getRecipe(recipeId);
   
   if (!recipe) {
-    await ctx.answerCallbackQuery({ text: 'Recipe not found' });
+    await ctx.answerCallbackQuery({ text: 'Рецепт не найден' });
     return;
   }
   
   if (recipe.userId !== userId) {
-    await ctx.answerCallbackQuery({ text: 'Access denied' });
+    await ctx.answerCallbackQuery({ text: 'Доступ запрещен' });
     return;
   }
   
@@ -126,12 +126,12 @@ async function handleDeleteRecipe(
   const recipe = await storage.getRecipe(recipeId);
   
   if (!recipe) {
-    await ctx.answerCallbackQuery({ text: 'Recipe not found' });
+    await ctx.answerCallbackQuery({ text: 'Рецепт не найден' });
     return;
   }
   
   if (recipe.userId !== userId) {
-    await ctx.answerCallbackQuery({ text: 'Access denied' });
+    await ctx.answerCallbackQuery({ text: 'Доступ запрещен' });
     return;
   }
   
@@ -143,7 +143,7 @@ async function handleDeleteRecipe(
   }
   
   await ctx.answerCallbackQuery();
-  await ctx.reply(`⚠️ Are you sure you want to delete "${recipe.title}"?`);
+  await ctx.reply(`⚠️ Вы уверены, что хотите удалить "${recipe.title}"?`);
 }
 
 async function handleConfirmYes(ctx: any, storage: StorageService) {
@@ -152,7 +152,7 @@ async function handleConfirmYes(ctx: any, storage: StorageService) {
   
   const session = storage.getSession(userId);
   if (!session || !(session as any).pendingDelete) {
-    await ctx.answerCallbackQuery({ text: 'No pending deletion' });
+    await ctx.answerCallbackQuery({ text: 'Нет ожидающего удаления' });
     return;
   }
   
@@ -163,10 +163,10 @@ async function handleConfirmYes(ctx: any, storage: StorageService) {
     (session as any).pendingDelete = undefined;
     storage.setSession(userId, session);
     
-    await ctx.answerCallbackQuery({ text: 'Recipe deleted' });
-    await ctx.reply('✅ Recipe deleted successfully.');
+    await ctx.answerCallbackQuery({ text: 'Рецепт удален' });
+    await ctx.reply('✅ Рецепт успешно удален.');
   } catch (error) {
-    await ctx.answerCallbackQuery({ text: 'Failed to delete recipe' });
+    await ctx.answerCallbackQuery({ text: 'Не удалось удалить рецепт' });
   }
 }
 
@@ -180,6 +180,6 @@ async function handleConfirmNo(ctx: any, storage: StorageService) {
     storage.setSession(userId, session);
   }
   
-  await ctx.answerCallbackQuery({ text: 'Deletion cancelled' });
-  await ctx.reply('✅ Deletion cancelled.');
+  await ctx.answerCallbackQuery({ text: 'Удаление отменено' });
+  await ctx.reply('✅ Удаление отменено.');
 }

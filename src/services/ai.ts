@@ -71,14 +71,14 @@ export class ZaiAIService {
    * Suggest recipe title from ingredients
    */
   async suggestTitle(ingredients: string[]): Promise<string> {
-    const prompt = `Suggest a creative recipe title based on these ingredients: ${ingredients.join(', ')}. Return only the title, no explanation.`;
+    const prompt = `Предложите креативное название рецепта на основе этих ингредиентов: ${ingredients.join(', ')}. Верните только название, без объяснений.`;
     
     try {
       const response = await this.callAI(prompt);
       return response.trim();
     } catch (error) {
       console.error('AI title suggestion error:', error);
-      return 'Untitled Recipe';
+      return 'Рецепт без названия';
     }
   }
   
@@ -91,14 +91,14 @@ export class ZaiAIService {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.config.apiKey}`,
-        'Accept-Language': 'en-US,en',
+        'Accept-Language': 'ru-RU,ru',
       },
       body: JSON.stringify({
         model: 'glm-4.7',
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful cooking assistant. Always respond with valid JSON when asked for structured data.',
+            content: 'Вы полезный кулинарный помощник. Всегда отвечайте валидным JSON, когда запрашивают структурированные данные.',
           },
           {
             role: 'user',
@@ -130,39 +130,39 @@ export class ZaiAIService {
   }
   
   private buildClassificationPrompt(ingredients: string[]): string {
-    return `Classify these ingredients and return JSON:
+    return `Классифицируйте эти ингредиенты и верните JSON:
 {
   "ingredients": [
     {
-      "name": "ingredient name",
+      "name": "название ингредиента",
       "classification": "main_course|appetizer|dessert|beverage|soup|salad|breakfast|snack|other"
     }
   ],
-  "suggestedCategory": "most likely recipe category"
+  "suggestedCategory": "наиболее вероятная категория рецепта"
 }
 
-Ingredients: ${ingredients.join(', ')}`;
+Ингредиенты: ${ingredients.join(', ')}`;
   }
   
   private buildCategoryPrompt(ingredients: Array<{ name: string; classification?: RecipeCategory }>, title?: string): string {
     const ingredientNames = ingredients.map(i => i.name).join(', ');
-    const titleText = title ? ` Recipe title: ${title}` : '';
-    return `Determine the recipe category (main_course, appetizer, dessert, beverage, soup, salad, breakfast, snack, other) for these ingredients:${titleText}
-${ingredientNames}
+    const titleText = title ? ` Название рецепта: ${title}` : '';
+    return `Определите категорию рецепта (main_course, appetizer, dessert, beverage, soup, salad, breakfast, snack, other) для этих ингредиентов:${titleText}
+ ${ingredientNames}
 
-Return only the category name.`;
+Верните только название категории.`;
   }
   
   private buildFormatPrompt(recipe: PartialRecipe): string {
     const ingredientText = recipe.ingredients?.map(i => i.name).join(', ') || '';
-    return `Format this recipe for Telegram with proper Markdown. Make it visually appealing and easy to read.
+    return `Отформатируйте этот рецепт для Telegram с правильным Markdown. Сделайте его визуально привлекательным и легким для чтения.
 
-Title: ${recipe.title || 'Untitled'}
-Category: ${recipe.category || 'other'}
-Ingredients: ${ingredientText}
-${recipe.instructions ? `Instructions: ${recipe.instructions}` : ''}
+Название: ${recipe.title || 'Рецепт без названия'}
+Категория: ${recipe.category || 'other'}
+Ингредиенты: ${ingredientText}
+${recipe.instructions ? `Инструкции: ${recipe.instructions}` : ''}
 
-Return formatted text only.`;
+Верните только отформатированный текст.`;
   }
   
   private parseClassificationResponse(response: string): ClassificationResponse {
@@ -192,16 +192,16 @@ Return formatted text only.`;
   
   private simpleFormat(recipe: PartialRecipe): string {
     const lines = [
-      `🍽️ *${recipe.title || 'Untitled Recipe'}*`,
+      `🍽️ *${recipe.title || 'Рецепт без названия'}*`,
       '',
-      `📂 Category: ${recipe.category || 'other'}`,
+      `📂 Категория: ${recipe.category || 'other'}`,
       '',
-      '🥘 Ingredients:',
+      '🥘 Ингредиенты:',
       ...(recipe.ingredients?.map(i => `  • ${i.name}${i.amount ? ` (${i.amount}${i.unit || ''})` : ''}`) || []),
     ];
     
     if (recipe.instructions) {
-      lines.push('', '📝 Instructions:', recipe.instructions);
+      lines.push('', '📝 Инструкции:', recipe.instructions);
     }
     
     return lines.join('\n');
