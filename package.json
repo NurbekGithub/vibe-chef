@@ -15,6 +15,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "grammy": "^1.39.2"
+    "grammy": "^1.39.2",
+    "openai": "^4.20.0"
   }
 }
