@@ -37,6 +37,29 @@ export class SearchHandler {
   }
 
   /**
+   * Handle search query directly (without /search command)
+   */
+  async handleSearchQuery(ctx: Context, query: string): Promise<void> {
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      await ctx.reply('Please provide a search query.');
+      return;
+    }
+
+    // Search for recipes
+    const results = await this.storage.search({ query: trimmedQuery });
+
+    if (results.length === 0) {
+      await ctx.reply(`🔍 No recipes found for "${trimmedQuery}".\n\nTry a different search term or add more recipes with /recipe <youtube_url>.`);
+      return;
+    }
+
+    // Format and send results
+    await this.sendSearchResults(ctx, trimmedQuery, results);
+  }
+
+  /**
    * Send formatted search results
    */
   private async sendSearchResults(ctx: Context, query: string, results: any[]): Promise<void> {

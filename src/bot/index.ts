@@ -37,6 +37,22 @@ export async function createBot(): Promise<Bot> {
   bot.command('help', (ctx) => recipeHandler.handleHelpCommand(ctx));
   bot.command('start', (ctx) => recipeHandler.handleHelpCommand(ctx));
 
+  // Handle text messages (recipe IDs or search queries)
+  bot.on('message:text', async (ctx) => {
+    const text = ctx.message?.text?.trim();
+    if (!text) return;
+
+    // Try to find recipe by ID first
+    const recipe = await storage.getById(text);
+    if (recipe) {
+      await recipeHandler.handleRecipeById(ctx, text);
+      return;
+    }
+
+    // If not a recipe ID, treat as search query
+    await searchHandler.handleSearchQuery(ctx, text);
+  });
+
   // Handle errors
   bot.catch((err) => {
     console.error('Bot error:', err);

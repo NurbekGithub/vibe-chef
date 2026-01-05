@@ -151,6 +151,20 @@ ${recipe.instructions.map((inst, i) => `${i + 1}. ${inst}`).join('\n')}
   }
 
   /**
+   * Handle recipe lookup by ID
+   */
+  async handleRecipeById(ctx: Context, recipeId: string): Promise<void> {
+    const recipe = await this.storage.getById(recipeId);
+    
+    if (!recipe) {
+      await ctx.reply(`❌ Recipe with ID "${recipeId}" not found.\n\nUse /list to see all saved recipes.`);
+      return;
+    }
+    
+    await this.sendRecipeCard(ctx, recipe);
+  }
+
+  /**
    * Handle help command
    */
   async handleHelpCommand(ctx: Context): Promise<void> {
@@ -164,6 +178,11 @@ ${recipe.instructions.map((inst, i) => `${i + 1}. ${inst}`).join('\n')}
 /list - List all saved recipes
 /help - Show this help message
 
+<b>Quick Actions:</b>
+
+• Send a <b>recipe ID</b> to view the full recipe details
+• Send any <b>text</b> to search for recipes by name or ingredients
+
 <b>How it works:</b>
 1. Send a YouTube recipe video link
 2. Bot extracts the transcript
@@ -176,7 +195,8 @@ ${recipe.instructions.map((inst, i) => `${i + 1}. ${inst}`).join('\n')}
 ✅ Ingredient and instruction parsing
 ✅ English to Russian translation
 ✅ Search by name or ingredients
-✅ In-memory storage
+✅ Quick recipe lookup by ID
+✅ Redis-based storage
     `.trim();
 
     await ctx.reply(helpMessage, { parse_mode: 'HTML' });
