@@ -25,7 +25,7 @@ export class SearchHandler {
     const query = match[1].trim();
 
     // Search for recipes
-    const results = this.storage.search({ query });
+    const results = await this.storage.search({ query });
 
     if (results.length === 0) {
       await ctx.reply(`🔍 No recipes found for "${query}".\n\nTry a different search term or add more recipes with /recipe <youtube_url>.`);

@@ -70,7 +70,7 @@ export class RecipeHandler {
       const recipe = await this.ai.processRecipe(transcript, youtubeUrl);
 
       // Step 4: Save to storage
-      this.storage.add(recipe);
+      await this.storage.add(recipe);
 
       // Step 5: Send formatted recipe
       await ctx.api.deleteMessage(ctx.chat!.id, statusMessage.message_id);
@@ -132,7 +132,7 @@ ${recipe.instructions.map((inst, i) => `${i + 1}. ${inst}`).join('\n')}
    * Handle list command
    */
   async handleListCommand(ctx: Context): Promise<void> {
-    const recipes = this.storage.getAll();
+    const recipes = await this.storage.getAll();
 
     if (recipes.length === 0) {
       await ctx.reply('📭 No recipes saved yet. Use /recipe [youtube_url] to add one!');

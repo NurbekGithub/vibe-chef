@@ -4,15 +4,17 @@ export interface Config {
   zaiApiEndpoint: string;
   supadataApiKey: string;
   supadataApiEndpoint: string;
+  redisUrl: string;
   nodeEnv: string;
 }
 
 export function getConfig(): Config {
   const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
   const zaiApiKey = process.env.ZAI_API_KEY;
-  const zaiApiEndpoint = process.env.ZAI_API_ENDPOINT;
+  const zaiApiEndpoint = process.env.ZAI_API_ENDPOINT || 'https://api.z.ai/api/coding/paas/v4';
   const supadataApiKey = process.env.SUPADATA_API_KEY;
   const supadataApiEndpoint = process.env.SUPADATA_API_ENDPOINT || 'https://api.supadata.ai/v1';
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   const nodeEnv = process.env.NODE_ENV || 'development';
 
   if (!telegramBotToken) {
@@ -33,6 +35,7 @@ export function getConfig(): Config {
     zaiApiEndpoint,
     supadataApiKey,
     supadataApiEndpoint,
+    redisUrl,
     nodeEnv,
   };
 }

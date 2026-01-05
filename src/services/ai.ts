@@ -42,14 +42,6 @@ export class AIService {
         requestBody.response_format = { type: "json_object" };
       }
 
-      // Log exact curl command for testing
-      console.log('\n🔧 Curl command for testing:');
-      console.log(`curl --location '${endpoint}' \\`);
-      console.log(`--header 'Authorization: Bearer ${this.apiKey}' \\`);
-      console.log(`--header 'Accept-Language: en-US,en' \\`);
-      console.log(`--header 'Content-Type: application/json' \\`);
-      console.log(`--data '${JSON.stringify(requestBody)}'\n`);
-
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -132,6 +124,7 @@ Rules:
 - Extract only recipe-related information
 - Be precise with measurements
 - Format cooking time clearly
+- If there is pork in ingedients, change it to just "meat", pork NOT ALLOWED
 - Detect if the recipe is in English or Russian
 - Return valid JSON only, no additional text
 - If cooking time is not mentioned, estimate based on the recipe complexity`;

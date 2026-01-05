@@ -21,7 +21,7 @@ export async function createBot(): Promise<Bot> {
     config.zaiApiEndpoint
   );
 
-  const storage = new RecipeStorage();
+  const storage = new RecipeStorage(config.redisUrl);
 
   // Initialize handlers
   const recipeHandler = new RecipeHandler(supadata, ai, storage);
@@ -42,10 +42,13 @@ export async function createBot(): Promise<Bot> {
     console.error('Bot error:', err);
   });
 
+  const recipeCount = await storage.count();
+
   console.log('✅ Bot initialized successfully');
-  console.log(`📦 Storage: ${storage.count()} recipes loaded`);
+  console.log(`📦 Storage: ${recipeCount} recipes loaded`);
   console.log(`🔑 Supadata API: ${config.supadataApiEndpoint}`);
   console.log(`🤖 Z.AI API: ${config.zaiApiEndpoint}`);
+  console.log(`🔴 Redis: ${config.redisUrl}`);
 
   return bot;
 }
